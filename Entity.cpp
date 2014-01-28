@@ -75,6 +75,5 @@ void Entity::update(double frametime)
 
 void Entity::display(sf::RenderTarget& screen)
 {
-    std::cout << m_shape.getFillColor().r << std::endl;
     screen.draw(m_shape);
 }

@@ -1,10 +1,10 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
 #include "Entity.hpp"
 
-#define NODE_CAPACITY 4
+#define NODE_CAPACITY 2
 
 class QuadTree
 {
@@ -14,7 +14,9 @@ class QuadTree
 
         bool insert(Entity* entity);
         void subdivide();
+        void clear();
 
+        void display(sf::RenderTarget& screen);
 
     protected:
         std::vector<Entity*> m_entities;
@@ -25,6 +27,8 @@ class QuadTree
         QuadTree* m_se;
 
         sf::FloatRect m_boundaries;
+
+        sf::RectangleShape m_shape;
 };
 
 #endif // QUADTREE_H
