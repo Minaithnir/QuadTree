@@ -20,27 +20,25 @@ bool QuadTree::insert(Entity* entity)
     if(!m_boundaries.contains(entity->getPosition()))
         return false;
 
-    if(m_entities.size() < NODE_CAPACITY)
+    if(m_entities.size() < NODE_CAPACITY && m_nw == NULL)
     {
         m_entities.push_back(entity);
         return true;
     }
-    else
-    {
-        if(m_nw == NULL)
-        {
-            subdivide();
-        }
 
-        if(m_nw->insert(entity))
-            return true;
-        if(m_ne->insert(entity))
-            return true;
-        if(m_sw->insert(entity))
-            return true;
-        if(m_se->insert(entity))
-            return true;
+    if(m_nw == NULL)
+    {
+        subdivide();
     }
+
+    if(m_nw->insert(entity))
+        return true;
+    if(m_ne->insert(entity))
+        return true;
+    if(m_sw->insert(entity))
+        return true;
+    if(m_se->insert(entity))
+        return true;
 
     return false;
 }
@@ -110,3 +108,10 @@ void QuadTree::display(sf::RenderTarget& screen)
     }
 }
 
+long QuadTree::getCount()
+{
+    if(m_nw != NULL)
+        return m_nw->getCount() + m_ne->getCount() + m_sw->getCount() + m_se->getCount();
+    else
+        return m_entities.size();
+}

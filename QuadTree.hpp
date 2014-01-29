@@ -18,6 +18,8 @@ class QuadTree
 
         void display(sf::RenderTarget& screen);
 
+        long getCount();
+
     protected:
         std::vector<Entity*> m_entities;
 

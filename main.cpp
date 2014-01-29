@@ -20,6 +20,7 @@ int main()
     sf::Clock framerateClock;
     long framerate=0;
     long lastFramerate=0;
+    double elapsedTime;
 
     std::vector<Entity> entities;
 
@@ -31,7 +32,13 @@ int main()
     entityCounter.setPosition(10,10);
     entityCounter.setColor(sf::Color::Red);
 
-    QuadTree qTree(sf::FloatRect(0,0, WIDTH, HEIGHT));
+    sf::Text fps;
+    fps.setFont(font);
+    fps.setCharacterSize(24);
+    fps.setPosition(10,30);
+    fps.setColor(sf::Color::Red);
+
+    QuadTree qTree(sf::FloatRect(-1,-1, WIDTH+2, HEIGHT+2));
 
     std::ostringstream convert;
 
@@ -58,12 +65,17 @@ int main()
                 switch(event.key.code)
                 {
                 case sf::Keyboard::Space :
-                    for(unsigned int i=0; i<1; i++)
+                    for(unsigned int i=0; i<100; i++)
+                    {
                         entities.push_back(Entity(sf::Mouse::getPosition(window).x,
                                               sf::Mouse::getPosition(window).y,
                                               rand()%MAX_SPEED - MAX_SPEED/2,
                                               rand()%MAX_SPEED - MAX_SPEED/2,
                                               sf::FloatRect(0, 0, WIDTH, HEIGHT)));
+                    }
+                    convert.str("");
+                    convert << "Entities : " << entities.size();
+                    entityCounter.setString(convert.str());
                     break;
                 default :
                     break;
@@ -75,7 +87,7 @@ int main()
         }
 
         // Entities update
-        double elapsedTime = frameClock.getElapsedTime().asSeconds();
+        elapsedTime = frameClock.getElapsedTime().asSeconds();
         frameClock.restart();
         qTree.clear();
         for(std::vector<Entity>::iterator it=entities.begin(); it != entities.end(); it++)
@@ -86,7 +98,7 @@ int main()
 
         window.clear(sf::Color::White);
 
-        qTree.display(window);
+        //qTree.display(window);
         for(std::vector<Entity>::iterator it=entities.begin(); it != entities.end(); it++)
         {
             it->display(window);
@@ -96,15 +108,15 @@ int main()
         if(framerateClock.getElapsedTime().asSeconds()>=1)
         {
             framerateClock.restart();
-            lastFramerate = framerate;
+            convert.str("");
+            convert << "FPS : " << framerate;
+            fps.setString(convert.str());
             framerate = 0;
         }
 
-        convert.str("");
-        convert << "Entities : " << entities.size() << " FPS : " << lastFramerate;
 
-        entityCounter.setString(convert.str());
         window.draw(entityCounter);
+        window.draw(fps);
         window.display();
     }
 
