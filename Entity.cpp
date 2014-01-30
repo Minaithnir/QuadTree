@@ -1,5 +1,6 @@
 #include "Entity.hpp"
 #include <iostream>
+#include <math.h>
 
 Entity::Entity()
 {
@@ -46,6 +47,11 @@ void Entity::setSpeed(double x, double y)
     m_speed.y = y;
 }
 
+void Entity::setColor(sf::Color color)
+{
+    m_shape.setFillColor(color);
+}
+
 void Entity::setBoundary(sf::FloatRect rect)
 {
     m_boundaries = rect;
@@ -82,4 +88,9 @@ void Entity::display(sf::RenderTarget& screen)
 void Entity::pos()
 {
     std::cout << m_pos.x << " " << m_pos.y << std::endl;
+}
+
+float Entity::distance(float x, float y)
+{
+    return sqrt(((x-m_pos.x)*(x-m_pos.x))+((y-m_pos.y)*(y-m_pos.y)));
 }

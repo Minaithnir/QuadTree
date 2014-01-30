@@ -18,11 +18,12 @@ class Entity
         sf::Vector2f getPosition();
 
         void setSpeed(double x, double y);
-
         void setBoundary(sf::FloatRect rect);
+        void setColor(sf::Color color);
+
+        float distance(float x, float y);
 
         void update(double frametime);
-
         void display(sf::RenderTarget& screen);
 
         void pos();

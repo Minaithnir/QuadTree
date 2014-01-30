@@ -96,6 +96,28 @@ std::list<Entity*> QuadTree::getEntities()
     return m_entities;
 }
 
+std::list<Entity*> QuadTree::range(float x, float y, float range)
+{
+    std::list<Entity*> inRange;
+    if(!m_boundaries.intersects(sf::FloatRect(x-range, y-range, 2.0f*range, 2.0f*range)))
+        return inRange;
+
+    if(m_nw==NULL)
+        return m_entities;
+
+    std::list<Entity*> child;
+    child = m_nw->range(x,y,range);
+    inRange.insert(inRange.begin(), child.begin(), child.end());
+    child = m_ne->range(x,y,range);
+    inRange.insert(inRange.begin(), child.begin(), child.end());
+    child = m_sw->range(x,y,range);
+    inRange.insert(inRange.begin(), child.begin(), child.end());
+    child = m_se->range(x,y,range);
+    inRange.insert(inRange.begin(), child.begin(), child.end());
+
+    return inRange;
+}
+
 void QuadTree::clear()
 {
     if(m_nw != NULL)

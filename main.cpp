@@ -10,7 +10,11 @@
 #define HEIGHT 1000
 
 #define MAX_SPEED 500
-#define INIT 100
+#define BATCH_SIZE 100
+
+#define RANGE 5
+
+void Collisions(std::vector<Entity>& entities, QuadTree& qTree, bool& useQTree);
 
 int main()
 {
@@ -22,8 +26,10 @@ int main()
     long framerate=0;
     double elapsedTime;
     bool toggleDisplay = true;
+    bool toggleQTree = true;
 
     std::vector<Entity> entities;
+    std::list<Entity*> inRange;
 
     sf::Font font;
     font.loadFromFile("times.ttf");
@@ -65,16 +71,10 @@ int main()
             case sf::Event::KeyPressed :
                 switch(event.key.code)
                 {
-                case sf::Keyboard::Space :
-                    for(unsigned int i=0; i<INIT; i++)
+                case sf::Keyboard::A :
+                    // batch insertion
+                    for(unsigned int i=0; i<BATCH_SIZE; i++)
                     {
-                        /*
-                        entities.push_back(Entity(sf::Mouse::getPosition(window).x,
-                                              sf::Mouse::getPosition(window).y,
-                                              0,
-                                              0,
-                                              sf::FloatRect(0, 0, WIDTH, HEIGHT)));
-                                              */
                         entities.push_back(Entity(sf::Mouse::getPosition(window).x,
                                               sf::Mouse::getPosition(window).y,
                                               rand()%MAX_SPEED - MAX_SPEED/2,
@@ -86,8 +86,9 @@ int main()
                     entityCounter.setString(convert.str());
                     break;
                 case sf::Keyboard::D :
+                    // batch delete
                     if(entities.size()>0)
-                        for(unsigned int i=0; i<INIT; i++)
+                        for(unsigned int i=0; i<BATCH_SIZE; i++)
                         {
                             //qTree.remove(&(entities.back()));
                             entities.pop_back();
@@ -96,8 +97,13 @@ int main()
                     convert << "Entities : " << entities.size();
                     entityCounter.setString(convert.str());
                     break;
-                case sf::Keyboard::A :
+                case sf::Keyboard::G :
                     toggleDisplay = toggleDisplay? false : true;
+                    break;
+                case sf::Keyboard::T :
+                    toggleQTree = toggleQTree? false : true;
+                    if(!toggleQTree)
+                        qTree.clear();
                     break;
                 default :
                     break;
@@ -108,25 +114,20 @@ int main()
             }
         }
 
-        // Entities update
+        /// updates
         elapsedTime = frameClock.getElapsedTime().asSeconds();
         frameClock.restart();
-        qTree.clear();
+        if(toggleQTree)
+            qTree.clear();
+        // entity update and qtree insertion
         for(std::vector<Entity>::iterator it=entities.begin(); it != entities.end(); it++)
         {
             it->update(elapsedTime);
-            qTree.insert(&(*it));
+            if(toggleQTree)
+                qTree.insert(&(*it));
         }
 
-        window.clear(sf::Color::White);
-
-        if(toggleDisplay)
-            qTree.display(window);
-        for(std::vector<Entity>::iterator it=entities.begin(); it != entities.end(); it++)
-        {
-            it->display(window);
-        }
-
+        // framerate update
         framerate++;
         if(framerateClock.getElapsedTime().asSeconds()>=1)
         {
@@ -137,10 +138,75 @@ int main()
             framerate = 0;
         }
 
+        // inrange update
+        for(std::vector<Entity>::iterator it=entities.begin(); it!=entities.end(); it++)
+        {
+            it->setColor(sf::Color::Black);
+        }
+
+        Collisions(entities, qTree, toggleQTree);
+/*
+        float mouseX = sf::Mouse::getPosition(window).x;
+        float mouseY = sf::Mouse::getPosition(window).y;
+
+        if(toggleQTree)
+        {
+            inRange = qTree.range(mouseX, mouseY, RANGE);
+            for(std::list<Entity*>::iterator it=inRange.begin(); it!=inRange.end(); it++)
+            {
+                if((*it)->distance(mouseX, mouseY) < RANGE)
+                {
+                    (*it)->setColor(sf::Color::Red);
+                }
+                else
+                    (*it)->setColor(sf::Color::Blue);
+            }
+        }
+*/
+
+        /// display
+        window.clear(sf::Color::White);
+
+        if(toggleDisplay)
+            qTree.display(window);
+        for(std::vector<Entity>::iterator it=entities.begin(); it != entities.end(); it++)
+        {
+            it->display(window);
+        }
+
         window.draw(entityCounter);
         window.draw(fps);
         window.display();
     }
 
     return 0;
+}
+
+void Collisions(std::vector<Entity>& entities, QuadTree& qTree, bool& useQTree)
+{
+    std::list<Entity*> inRange;
+
+    for(std::vector<Entity>::iterator eIt=entities.begin(); eIt!=entities.end(); eIt++)
+    {
+        float eX = eIt->getPosition().x;
+        float eY = eIt->getPosition().y;
+
+        if(useQTree)
+        {
+            inRange = qTree.range(eX, eY, RANGE);
+            for(std::list<Entity*>::iterator it=inRange.begin(); it!=inRange.end(); it++)
+            {
+                if((*it)->distance(eX, eY) < RANGE && (*it) != (&(*eIt)))
+                    (*it)->setColor(sf::Color::Red);
+            }
+        }
+        else
+        {
+            for(std::vector<Entity>::iterator it=entities.begin(); it!=entities.end(); it++)
+            {
+                if(it->distance(eX, eY) < RANGE && (&(*it)) != (&(*eIt)))
+                    it->setColor(sf::Color::Red);
+            }
+        }
+    }
 }

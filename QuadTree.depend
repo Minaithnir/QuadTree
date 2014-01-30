@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1391092608 source:d:\programmation\quadtree\entity.cpp
+1391095270 source:d:\programmation\quadtree\entity.cpp
 	"Entity.hpp"
 	<iostream>
+	<math.h>
 
-1391087188 d:\programmation\quadtree\entity.hpp
+1391095084 d:\programmation\quadtree\entity.hpp
 	<SFML/Graphics.hpp>
 
 1367997280 d:\programmation\sfml-2.1\include\sfml\graphics.hpp
@@ -340,7 +341,7 @@
 	<string>
 	<vector>
 
-1391092680 source:d:\programmation\quadtree\main.cpp
+1391098875 source:d:\programmation\quadtree\main.cpp
 	<SFML/Graphics.hpp>
 	"Entity.hpp"
 	"QuadTree.hpp"
@@ -348,12 +349,12 @@
 	<time.h>
 	<sstream>
 
-1391092858 source:d:\programmation\quadtree\quadtree.cpp
+1391096761 source:d:\programmation\quadtree\quadtree.cpp
 	"QuadTree.hpp"
 	<iostream>
 	<sstream>
 
-1391093921 d:\programmation\quadtree\quadtree.hpp
+1391098968 d:\programmation\quadtree\quadtree.hpp
 	<SFML/Graphics.hpp>
 	"Entity.hpp"
 	<list>
