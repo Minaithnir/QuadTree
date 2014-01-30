@@ -31,12 +31,13 @@ sf::Drawable& Entity::getSprite()
 
 void Entity::setPosition(int x, int y)
 {
-    m_shape.setPosition(x, y);
+    m_pos.x = x;
+    m_pos.y = y;
 }
 
 sf::Vector2f Entity::getPosition()
 {
-    return m_shape.getPosition();
+    return m_pos;
 }
 
 void Entity::setSpeed(double x, double y)
@@ -52,28 +53,28 @@ void Entity::setBoundary(sf::FloatRect rect)
 
 void Entity::update(double frametime)
 {
-    double moveX = m_speed.x * frametime;
-    double moveY = m_speed.y * frametime;
-    m_shape.move(moveX, moveY);
+    m_pos.x += m_speed.x * frametime;
+    m_pos.y += m_speed.y * frametime;
 
-    if(m_shape.getPosition().x < m_boundaries.left
-       || m_shape.getPosition().x > m_boundaries.left+m_boundaries.width)
+    if(getPosition().x < m_boundaries.left
+       || getPosition().x > m_boundaries.left+m_boundaries.width)
     {
         m_speed.x = -m_speed.x;
-        m_shape.setPosition(m_speed.x < 0 ? m_boundaries.left+m_boundaries.width : m_boundaries.left,
-                            m_shape.getPosition().y);
+        setPosition(m_speed.x < 0 ? m_boundaries.left+m_boundaries.width : m_boundaries.left,
+                    getPosition().y);
     }
 
-    if(m_shape.getPosition().y < m_boundaries.top
-       || m_shape.getPosition().y > m_boundaries.top+m_boundaries.height)
+    if(getPosition().y < m_boundaries.top
+       || getPosition().y > m_boundaries.top+m_boundaries.height)
     {
         m_speed.y = -m_speed.y;
-        m_shape.setPosition(m_shape.getPosition().x,
-                            m_speed.y < 0 ? m_boundaries.top+m_boundaries.height : m_boundaries.top);
+        setPosition(getPosition().x,
+                    m_speed.y < 0 ? m_boundaries.top+m_boundaries.height : m_boundaries.top);
     }
 }
 
 void Entity::display(sf::RenderTarget& screen)
 {
+    m_shape.setPosition(m_pos);
     screen.draw(m_shape);
 }

@@ -26,6 +26,7 @@ class Entity
         void display(sf::RenderTarget& screen);
     protected:
         sf::CircleShape m_shape;
+        sf::Vector2f m_pos;
         sf::Vector2f m_speed;
 
         sf::FloatRect m_boundaries;

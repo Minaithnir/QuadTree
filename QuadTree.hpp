@@ -13,7 +13,11 @@ class QuadTree
         virtual ~QuadTree();
 
         bool insert(Entity* entity);
-        void subdivide();
+        bool remove(Entity* entity);
+        bool merge();
+        void split();
+
+        std::vector<Entity*> getEntities();
         void clear();
 
         void display(sf::RenderTarget& screen);
@@ -23,12 +27,15 @@ class QuadTree
     protected:
         std::vector<Entity*> m_entities;
 
+        sf::FloatRect m_boundaries;
+
         QuadTree* m_nw;
         QuadTree* m_ne;
         QuadTree* m_sw;
         QuadTree* m_se;
 
-        sf::FloatRect m_boundaries;
+        sf::Font m_f;
+        sf::Text m_t;
 
         sf::RectangleShape m_shape;
 };

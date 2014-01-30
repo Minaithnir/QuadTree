@@ -44,6 +44,10 @@
 		<Linker>
 			<Add directory="D:/Programmation/SFML-2.1/lib" />
 		</Linker>
+		<Unit filename="Entity.cpp" />
+		<Unit filename="Entity.hpp" />
+		<Unit filename="QuadTree.cpp" />
+		<Unit filename="QuadTree.hpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
