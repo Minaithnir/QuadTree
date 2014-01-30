@@ -14,7 +14,7 @@ class Entity
         virtual ~Entity();
 
         sf::Drawable& getSprite();
-        void setPosition(int x, int y);
+        void setPosition(double x, double y);
         sf::Vector2f getPosition();
 
         void setSpeed(double x, double y);
@@ -24,6 +24,8 @@ class Entity
         void update(double frametime);
 
         void display(sf::RenderTarget& screen);
+
+        void pos();
     protected:
         sf::CircleShape m_shape;
         sf::Vector2f m_pos;

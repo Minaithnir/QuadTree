@@ -3,8 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 #include "Entity.hpp"
+#include <list>
 
 #define NODE_CAPACITY 2
+#define MIN_NODE_SIZE 20
 
 class QuadTree
 {
@@ -17,7 +19,7 @@ class QuadTree
         bool merge();
         void split();
 
-        std::vector<Entity*> getEntities();
+        std::list<Entity*> getEntities();
         void clear();
 
         void display(sf::RenderTarget& screen);
@@ -25,19 +27,16 @@ class QuadTree
         long getCount();
 
     protected:
-        std::vector<Entity*> m_entities;
+        std::list<Entity*> m_entities;
 
         sf::FloatRect m_boundaries;
+
+        sf::VertexArray m_lines;
 
         QuadTree* m_nw;
         QuadTree* m_ne;
         QuadTree* m_sw;
         QuadTree* m_se;
-
-        sf::Font m_f;
-        sf::Text m_t;
-
-        sf::RectangleShape m_shape;
 };
 
 #endif // QUADTREE_H

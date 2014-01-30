@@ -29,7 +29,7 @@ sf::Drawable& Entity::getSprite()
     return m_shape;
 }
 
-void Entity::setPosition(int x, int y)
+void Entity::setPosition(double x, double y)
 {
     m_pos.x = x;
     m_pos.y = y;
@@ -77,4 +77,9 @@ void Entity::display(sf::RenderTarget& screen)
 {
     m_shape.setPosition(m_pos);
     screen.draw(m_shape);
+}
+
+void Entity::pos()
+{
+    std::cout << m_pos.x << " " << m_pos.y << std::endl;
 }
