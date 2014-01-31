@@ -31,6 +31,7 @@ int main()
     std::vector<Entity> entities;
     std::list<Entity*> inRange;
 
+    /// craetion of the text display for fps & number of entities
     sf::Font font;
     font.loadFromFile("times.ttf");
     sf::Text entityCounter;
@@ -145,24 +146,6 @@ int main()
         }
 
         Collisions(entities, qTree, toggleQTree);
-/*
-        float mouseX = sf::Mouse::getPosition(window).x;
-        float mouseY = sf::Mouse::getPosition(window).y;
-
-        if(toggleQTree)
-        {
-            inRange = qTree.range(mouseX, mouseY, RANGE);
-            for(std::list<Entity*>::iterator it=inRange.begin(); it!=inRange.end(); it++)
-            {
-                if((*it)->distance(mouseX, mouseY) < RANGE)
-                {
-                    (*it)->setColor(sf::Color::Red);
-                }
-                else
-                    (*it)->setColor(sf::Color::Blue);
-            }
-        }
-*/
 
         /// display
         window.clear(sf::Color::White);
@@ -193,7 +176,8 @@ void Collisions(std::vector<Entity>& entities, QuadTree& qTree, bool& useQTree)
 
         if(useQTree)
         {
-            inRange = qTree.range(eX, eY, RANGE);
+            inRange.clear();
+            qTree.range(eX, eY, RANGE, inRange);
             for(std::list<Entity*>::iterator it=inRange.begin(); it!=inRange.end(); it++)
             {
                 if((*it)->distance(eX, eY) < RANGE && (*it) != (&(*eIt)))

@@ -6,8 +6,11 @@
 #include <list>
 
 #define NODE_CAPACITY 2
-#define MIN_NODE_SIZE 10
+#define MIN_NODE_SIZE 5
 
+/**
+ * QuadTree class
+ */
 class QuadTree
 {
     public:
@@ -19,8 +22,8 @@ class QuadTree
         bool merge();
         void split();
 
-        std::list<Entity*> getEntities();
-        std::list<Entity*> range(float x, float y, float range);
+        void getEntities(std::list<Entity*>& entities);
+        void range(float x, float y, float range, std::list<Entity*>& entities);
         void clear();
 
         void display(sf::RenderTarget& screen);

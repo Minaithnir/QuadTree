@@ -2,6 +2,10 @@
 #include <iostream>
 #include <sstream>
 
+/**
+Constructor
+define the boundaries of the node
+*/
 QuadTree::QuadTree(sf::FloatRect boundaries) : m_boundaries(boundaries), m_nw(NULL), m_ne(NULL), m_sw(NULL), m_se(NULL)
 {
     m_lines = sf::VertexArray(sf::LinesStrip, 3);
@@ -13,8 +17,14 @@ QuadTree::QuadTree(sf::FloatRect boundaries) : m_boundaries(boundaries), m_nw(NU
     m_lines[2].color = sf::Color::Black;
 }
 
+/**
+Destructor
+Relese the memory allocated to the children node if any
+*/
 QuadTree::~QuadTree()
 {
+    m_entities.clear();
+
     if(m_nw != NULL)
     {
         delete m_nw;
@@ -24,6 +34,10 @@ QuadTree::~QuadTree()
     }
 }
 
+/**
+Insert
+Insert an entity into the node or one of the child node if the capacity is exceeded
+*/
 bool QuadTree::insert(Entity* entity)
 {
     if(!m_boundaries.contains(entity->getPosition()))
@@ -50,6 +64,9 @@ bool QuadTree::insert(Entity* entity)
     return false;
 }
 
+/**
+Allocate the four child node and insert the entity currently in the node into the childrens
+*/
 void QuadTree::split()
 {
     float halfWidth = m_boundaries.width/2.0f;
@@ -74,50 +91,64 @@ void QuadTree::split()
     }
 }
 
-std::list<Entity*> QuadTree::getEntities()
+/**
+Retrieve entities from a node and its childrens if any
+*/
+void QuadTree::getEntities(std::list<Entity*>& entities)
 {
-    std::list<Entity*> entities;
     std::list<Entity*> childEntities;
 
     if(m_nw != NULL)
     {
-        childEntities = m_nw->getEntities();
+        childEntities.clear();
+        m_nw->getEntities(childEntities);
         entities.insert(entities.begin(), childEntities.begin(), childEntities.end());
-        childEntities = m_ne->getEntities();
+        childEntities.clear();
+        m_ne->getEntities(childEntities);
         entities.insert(entities.begin(), childEntities.begin(), childEntities.end());
-        childEntities = m_sw->getEntities();
+        childEntities.clear();
+        m_sw->getEntities(childEntities);
         entities.insert(entities.begin(), childEntities.begin(), childEntities.end());
-        childEntities = m_se->getEntities();
+        childEntities.clear();
+        m_se->getEntities(childEntities);
         entities.insert(entities.begin(), childEntities.begin(), childEntities.end());
-
-        return entities;
     }
-
-    return m_entities;
+    else
+        entities.insert(entities.begin(), m_entities.begin(), m_entities.end());
 }
 
-std::list<Entity*> QuadTree::range(float x, float y, float range)
+/**
+Retrieve entities from the node or its children if in range of a point specified in the arguments
+*/
+void QuadTree::range(float x, float y, float range, std::list<Entity*>& inRange)
 {
-    std::list<Entity*> inRange;
-    if(!m_boundaries.intersects(sf::FloatRect(x-range, y-range, 2.0f*range, 2.0f*range)))
-        return inRange;
-
-    if(m_nw==NULL)
-        return m_entities;
-
-    std::list<Entity*> child;
-    child = m_nw->range(x,y,range);
-    inRange.insert(inRange.begin(), child.begin(), child.end());
-    child = m_ne->range(x,y,range);
-    inRange.insert(inRange.begin(), child.begin(), child.end());
-    child = m_sw->range(x,y,range);
-    inRange.insert(inRange.begin(), child.begin(), child.end());
-    child = m_se->range(x,y,range);
-    inRange.insert(inRange.begin(), child.begin(), child.end());
-
-    return inRange;
+    if(m_boundaries.intersects(sf::FloatRect(x-range, y-range, 2.0f*range, 2.0f*range)))
+    {
+        if(m_nw==NULL)
+        {
+            inRange.insert(inRange.begin(), m_entities.begin(), m_entities.end());
+        }
+        else
+        {
+            std::list<Entity*> child;
+            m_nw->range(x,y,range, child);
+            inRange.insert(inRange.begin(), child.begin(), child.end());
+            child.clear();
+            m_ne->range(x,y,range, child);
+            inRange.insert(inRange.begin(), child.begin(), child.end());
+            child.clear();
+            m_sw->range(x,y,range, child);
+            inRange.insert(inRange.begin(), child.begin(), child.end());
+            child.clear();
+            m_se->range(x,y,range, child);
+            inRange.insert(inRange.begin(), child.begin(), child.end());
+        }
+    }
 }
 
+/**
+Empty the node and delete its childrens
+*/
 void QuadTree::clear()
 {
     if(m_nw != NULL)
@@ -141,6 +172,9 @@ void QuadTree::clear()
     }
 }
 
+/**
+Display the node's children if any or the south and east boundaries if no childrens
+*/
 void QuadTree::display(sf::RenderTarget& screen)
 {
     if(m_nw != NULL)
@@ -154,6 +188,9 @@ void QuadTree::display(sf::RenderTarget& screen)
         screen.draw(m_lines);
 }
 
+/**
+Return the number of entity in the current node and childs
+*/
 long QuadTree::getCount()
 {
     if(m_nw != NULL)
